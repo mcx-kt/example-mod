@@ -2,10 +2,14 @@ package dev.mcxkt.examplemod.pure
 
 import dev.mcxkt.examplemod.pure.item.SimpleItem
 import net.minecraft.block.Block
+import net.minecraft.init.Items
 import net.minecraft.item.Item
+import net.minecraft.item.ItemGroup
+import net.minecraft.item.ItemStack
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.event.RegistryEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
+import net.minecraftforge.fml.ModList
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
@@ -18,14 +22,20 @@ import org.apache.logging.log4j.LogManager
 class ExampleMod {
     companion object {
         val logger = LogManager.getLogger(ExampleMod::class.java)
+
+        val instance by lazy { ModList.get().getModObjectById<ExampleMod>("example").get() }
+
+        val exampleGroup = object : ItemGroup("example") {
+            override fun createIcon() = ItemStack(Items.DIAMOND)
+        }
     }
 
     init {
         FMLJavaModLoadingContext.get().modEventBus.apply {
-            addListener(this@ExampleMod::setup)
-            addListener(this@ExampleMod::clientSetup)
-            addListener(this@ExampleMod::serverSetup)
-            MinecraftForge.EVENT_BUS.register(this)
+            addListener<FMLCommonSetupEvent> { setup(it) }
+            addListener<FMLClientSetupEvent> { clientSetup(it) }
+            addListener<FMLDedicatedServerSetupEvent> { logger.info("Hello from server setup") }
+            MinecraftForge.EVENT_BUS.register(this@ExampleMod)
         }
     }
 
@@ -37,24 +47,26 @@ class ExampleMod {
         logger.info("Hello from client setup")
     }
 
-    private fun serverSetup(event: FMLDedicatedServerSetupEvent) {
-        logger.info("Hello from server setup")
-    }
-
+    @Suppress("unused")
     @SubscribeEvent
     fun onServerStarting(event: FMLServerStartingEvent) {
         logger.info("Hello from server starting")
     }
 
+    @Suppress("unused")
     @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
     class RegistryEvents {
-        @SubscribeEvent
-        fun onBlockRegistry(event: RegistryEvent.Register<Block>) {
-        }
+        companion object {
+            @SubscribeEvent
+            @JvmStatic
+            fun onBlockRegistry(event: RegistryEvent.Register<Block>) {
+            }
 
-        @SubscribeEvent
-        fun onItemRegistry(event: RegistryEvent.Register<Item>) {
-            event.registry.register(SimpleItem())
+            @SubscribeEvent
+            @JvmStatic
+            fun onItemRegistry(event: RegistryEvent.Register<Item>) {
+                event.registry.register(SimpleItem())
+            }
         }
     }
 }

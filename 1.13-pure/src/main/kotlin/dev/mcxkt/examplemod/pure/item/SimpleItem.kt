@@ -1,9 +1,9 @@
 package dev.mcxkt.examplemod.pure.item
 
+import dev.mcxkt.examplemod.pure.ExampleMod
 import net.minecraft.item.Item
-import net.minecraft.item.ItemGroup
 
-class SimpleItem : Item(Item.Properties().group(ItemGroup.BUILDING_BLOCKS)) {
+class SimpleItem : Item(Item.Properties().group(ExampleMod.exampleGroup)) {
     init {
         setRegistryName("example", "simple")
     }
