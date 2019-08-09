@@ -1,2 +1,2 @@
-# example-mod-1.13
+# example-mod
 An example mod

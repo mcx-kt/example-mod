@@ -1,0 +1,95 @@
+buildscript {
+    repositories {
+        jcenter()
+        maven {
+            name "forge"
+            url "http://files.minecraftforge.net/maven/"
+        }
+    }
+    dependencies {
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}"
+    }
+}
+
+apply plugin: "kotlin"
+apply plugin: "net.minecraftforge.gradle"
+
+archivesBaseName = "example-mod-1.13-pure"
+version = "1.0.0"
+group = "dev.mcxkt"
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+minecraft {
+    mappings = mcp_mappings
+
+    runs {
+        client {
+            workingDirectory project.file('run')
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                ExampleMod {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        testClient {
+            parent runs.client
+
+            mods {
+                KorgelinTest {
+                    source sourceSets.test
+                }
+            }
+        }
+
+        server {
+            workingDirectory project.file('run')
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                examplemod {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    minecraft "net.minecraftforge:forge:$mc_version-$forge_version"
+    implementation group: "org.jetbrains.kotlin", name: "kotlin-stdlib", version: kotlinVersion
+    implementation group: "org.jetbrains.kotlin", name: "kotlin-stdlib-jdk8", version: kotlinVersion
+}
+
+jar {
+    manifest {
+        attributes([
+                'Specification-Title'     : 'ExampleMod',
+                'Specification-Vendor'    : 'mcx.kt',
+                'Specification-Version'   : '1.0',
+                'Implementation-Title'    : "ExampleMod-pure-1.13",
+                'Implementation-Version'  : version,
+                'Implementation-Vendor'   : 'mcx.kt',
+                'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+}
