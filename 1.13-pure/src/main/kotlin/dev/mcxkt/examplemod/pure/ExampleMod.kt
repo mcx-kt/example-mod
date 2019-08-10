@@ -1,6 +1,7 @@
 package dev.mcxkt.examplemod.pure
 
 import dev.mcxkt.examplemod.pure.item.SimpleItem
+import dev.mcxkt.examplemod.pure.item.SimpleItemHoldNBT
 import net.minecraft.block.Block
 import net.minecraft.init.Items
 import net.minecraft.item.Item
@@ -66,6 +67,7 @@ class ExampleMod {
             @JvmStatic
             fun onItemRegistry(event: RegistryEvent.Register<Item>) {
                 event.registry.register(SimpleItem())
+                event.registry.register(SimpleItemHoldNBT())
             }
         }
     }
